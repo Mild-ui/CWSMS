@@ -66,27 +66,50 @@ app.post('/login' , (req ,res) => {
 })
 
 // Reset/Update User Password
-app.put('/reset-password', (req, res) => {
-    const { UserName, NewPassword } = req.body;
-    db.query('SELECT * FROM Users WHERE UserName = ?', [UserName], async (err, results) => {
-        if (err) {
-            return res.status(500).json(err);
-        }
-        if (results.length === 0) {
-            return res.status(404).json({ message: "Username not found in system record" });
+// app.put('/reset-password', (req, res) => {
+//     const { UserName, NewPassword } = req.body;
+//     db.query('SELECT * FROM Users WHERE UserName = ?', [UserName], async (err, results) => {
+//         if (err) {
+//             return res.status(500).json(err);
+//         }
+//         if (results.length === 0) {
+//             return res.status(404).json({ message: "Username not found in system record" });
+//         }
+
+//         const HashedPassword = await bcrypt.hash(NewPassword, 12);
+//         db.query('UPDATE Users SET Password = ? WHERE UserName = ?', [HashedPassword, UserName], (err, results) => {
+//             if (err) {
+//                 return res.status(500).json(err);
+//             }
+
+//             res.status(200).json({ message: "Password updated successfully" });
+//         });
+//     });
+// });
+
+
+// Try me 
+app.put('/reset-password' , (req,res) => {
+    const {UserName , NewPassword} = req.body;
+    db.query('SELECT * FROM Users WHERE UserName =  ?' , [UserName] , async(err,results) => {
+        if(err) {
+            return res.status(500).json(err)
         }
 
-        const HashedPassword = await bcrypt.hash(NewPassword, 12);
-        db.query('UPDATE Users SET Password = ? WHERE UserName = ?', [HashedPassword, UserName], (err, results) => {
-            if (err) {
-                return res.status(500).json(err);
+        if(results.length === 0) {
+            return res.status(400).json({message : "User Not found"})
+        }
+
+        const NewHashedPassword =await bcrypt.hash(NewPassword , 12);
+        db.query('UPDATE Users SET Password = ? WHERE UserName = ?' , [NewHashedPassword , UserName] , (err,results) => {
+            if(err) {
+                return res.status(500).json(err)
             }
 
-            res.status(200).json({ message: "Password updated successfully" });
-        });
-    });
-});
-
+            res.status(200).json({message : "Password updated successfully"})
+        })
+    })
+})
 
 // Get Packages
 app.get('/get-packages' , (req,res) => {
@@ -200,7 +223,7 @@ app.get('/get-service-Package', (req, res) => {
 
 
 
-// 1. Insert payment records linked directly to a Service Record
+// Insert payment records 
 app.post('/create-payment-record', (req, res) => {
     const { AmountPaid, PaymentDate, RecordNumber } = req.body;
 
@@ -217,7 +240,7 @@ app.post('/create-payment-record', (req, res) => {
 });
 
 
-// 2. Retrieve payments (Bypasses junction table to prevent N/A data display errors)
+//  Retrieve payments 
 app.get('/get-payment-record', (req, res) => {  
     const query = `
         SELECT 
@@ -241,7 +264,7 @@ app.get('/get-payment-record', (req, res) => {
     });
 });
 
-// 3. Complete and clean query lookup definition for the Report page
+// Report page
 app.get('/retrieve-report', (req, res) => {
     const query = `
         SELECT 

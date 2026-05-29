@@ -35,6 +35,9 @@ export default function Dashboard() {
                     </nav>
                 </div>
                 <div className='border-t border-slate-100 pt-4'>
+                    <Link to='/reset' className='flex items-center px-4 py-2.5 rounded-lg text-sm font-medium text-amber-600 hover:bg-amber-50 transition-colors'>
+                        Settings
+                    </Link>
                     <Link to='/logout' className='flex items-center px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors'>
                         Logout
                     </Link>
